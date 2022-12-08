@@ -19,16 +19,16 @@ const client = new MongoClient(uri, {
 const run = async () => {
   try {
     const db = client.db("hoteltastic");
-    const productCollection = db.collection("products");
+    const productCollection = db.collection("tutorials");
 
-    app.get("/products", async (req, res) => {
+    app.get("/tutorials", async (req, res) => {
       const cursor = productCollection.find({});
       const product = await cursor.toArray();
 
       res.send({ status: true, data: product });
     });
 
-    app.post("/product", async (req, res) => {
+    app.post("/tutorial", async (req, res) => {
       const product = req.body;
 
       const result = await productCollection.insertOne(product);
@@ -36,14 +36,14 @@ const run = async () => {
       res.send(result);
     });
 
-    app.patch("/product/:id", async (req, res) => {
+    app.patch("/tutorial/:id", async (req, res) => {
       const id = req.params.id;
       const data = req.body
       const result = await productCollection.updateOne({ _id: ObjectId(id) }, { $set: data });
       res.send(result);
     });
 
-    app.delete("/product/:id", async (req, res) => {
+    app.delete("/tutorial/:id", async (req, res) => {
       const id = req.params.id;
 
       const result = await productCollection.deleteOne({ _id: ObjectId(id) });
