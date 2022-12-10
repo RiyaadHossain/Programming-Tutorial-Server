@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const moment = require("moment")
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -19,31 +20,32 @@ const client = new MongoClient(uri, {
 const run = async () => {
   try {
     const db = client.db("hoteltastic");
-    const productCollection = db.collection("tutorials");
+    const productCollection = db.collection("blogs");
 
-    app.get("/tutorials", async (req, res) => {
+    app.get("/blogs", async (req, res) => {
       const cursor = productCollection.find({});
       const product = await cursor.toArray();
 
       res.send({ status: true, data: product });
     });
 
-    app.post("/tutorial", async (req, res) => {
+    app.post("/blog", async (req, res) => {
       const product = req.body;
 
-      const result = await productCollection.insertOne(product);
+      const postedAt = moment()
+      const result = await productCollection.insertOne({...product, postedAt});
 
       res.send(result);
     });
 
-    app.patch("/tutorial/:id", async (req, res) => {
+    app.patch("/blog/:id", async (req, res) => {
       const id = req.params.id;
       const data = req.body
       const result = await productCollection.updateOne({ _id: ObjectId(id) }, { $set: data });
       res.send(result);
     });
 
-    app.delete("/tutorial/:id", async (req, res) => {
+    app.delete("/blog/:id", async (req, res) => {
       const id = req.params.id;
 
       const result = await productCollection.deleteOne({ _id: ObjectId(id) });
